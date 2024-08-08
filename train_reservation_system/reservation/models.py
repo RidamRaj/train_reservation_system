@@ -6,9 +6,7 @@ from django.contrib.auth.models import AbstractUser
 # Create your models here.
 
 class CustomUser(AbstractUser):
-    # username = models.TextField(max_length=100, unique=True)
     email = models.EmailField(unique=True)
-    # password = models.TextField(max_length=100)
 
 class Train(models.Model):
     name = models.CharField(max_length=100)

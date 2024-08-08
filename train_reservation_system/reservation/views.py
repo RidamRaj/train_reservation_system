@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from .models import Train, Ticket
+from django.contrib.auth import login
 from .forms import CustomUserCreationForm
 
 
@@ -25,41 +26,56 @@ def bookings(request):
 
 User = get_user_model()
 
+# def register(request):
+#     if request.method == 'POST':
+#         form = CustomUserCreationForm(request.POST)
+#         if form.is_valid():
+#             try:
+#                 form.save()
+#                 messages.success(request, 'Registration successful. You can now log in.')
+#                 return redirect('login')
+#             except Exception as e:
+#                 messages.error(request, f'Registration failed: {str(e)}')
+#         else:
+#             # Log detailed form errors
+#             error_messages = form.errors.as_json()
+#             messages.error(request, f'Registration failed. Form errors: {error_messages}')
+#     else:
+#         form = CustomUserCreationForm()
+
+#     return render(request, 'register.html', {'form': form})
 def register(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
-            try:
-                form.save()
-                messages.success(request, 'Registration successful. You can now log in.')
-                return redirect('login')
-            except Exception as e:
-                messages.error(request, f'Registration failed: {str(e)}')
-        else:
-            # Log detailed form errors
-            error_messages = form.errors.as_json()
-            messages.error(request, f'Registration failed. Form errors: {error_messages}')
+            user = form.save(commit=False)
+            user.set_password(form.cleaned_data['password1'])
+            user.save()
+            login(request, user)
+            return redirect('train_details')
     else:
         form = CustomUserCreationForm()
 
-    return render(request, 'register.html', {'form': form})
 
 
-def login_view(request):
-    if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
+    return render(request, 'registration/register.html', {'form': form})
+
+
+# def login_view(request):
+#     if request.method == 'POST':
+#         username = request.POST['username']
+#         password = request.POST['password']
         
-        # Authenticate user
-        user = authenticate(request, username=username, password=password)
+#         # Authenticate user
+#         user = authenticate(request, username=username, password=password)
         
-        if user is not None:
-            auth_login(request, user)
-            return redirect('train_search')  # Redirect to home page after login
-        else:
-            messages.error(request, 'Invalid username or password.')
+#         if user is not None:
+#             auth_login(request, user)
+#             return redirect('train_search')  # Redirect to home page after login
+#         else:
+#             messages.error(request, 'Invalid username or password.')
     
-    return render(request, 'login.html')
+#     return render(request, 'login.html')
 
 def about(request):
     return render(request, 'about.html')

@@ -1,7 +1,24 @@
 {% extends 'base.html' %}
-{% block content %}
-<h1>Welcome to the Train Reservation System</h1>
-<form action="{% url 'login' %}" method="get">
-    <button type="submit">Search Trains</button>
-</form>
+
+{% block title %}
+Train Reservation System
 {% endblock %}
+{% block content %}
+<h1 class="text-center mt-4">Welcome to Train Reservation System</h1>
+
+{% if user.is_authenticated %}
+<form method="get" action ="{% url 'train_search' %}">
+              {% csrf_token %}
+              <button type = "submit"> Search Trains</button>
+              {% comment %} <button class="btn btn-danger" type="submit">Logout</button> {% endcomment %}
+            </form>
+            {% else %}
+            <h4 class="text-center"> You are not logged_in. Please Login to book ticket</h4>
+            {% endif %}
+{% endblock %}
+
+{% comment %} class="btn btn-success mx-2" {% endcomment %}
+{% comment %} href="{% url 'login' %}" {% endcomment %}
+{% comment %} <form action="{% url 'login' %}" method = "get">
+    <button type = "submit"> Search Trains</button>
+</form> {% endcomment %}
